@@ -2,6 +2,8 @@
 
 The Religious Places Exploration Platform is a web application designed to explore and document various religious sites across India. It allows users to add, view, edit, and delete information about temples, gurudwaras, churches, and masjids.
 
+![image](https://github.com/user-attachments/assets/60aea8ff-75e1-4ee1-9f27-ae10567cbe41)
+
 ## Features
 
 - **Explore Religious Places**: Users can browse through a collection of religious sites.
