@@ -1,0 +1,87 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<body>
+  <br />
+  <div class="row">
+    <div class="col-8 offset-1">
+      <h3>Edit your Listing</h3>
+      <br />
+      <form method="post" action="/places/<%= listing_._id %>?_method=PUT">
+        <div>
+          <label for="Title" class="form-label">Edit title</label>
+          <input
+            type="text"
+            class="form-control"
+            name="listing[title]"
+            value="<%= listing_.title %>"
+            required
+          />
+        </div>
+        <br />
+        <div>
+          <label for="description" class="form-label">Edit description</label>
+          <textarea name="listing[description]" class="form-control" required>
+<%= listing_.description %></textarea
+          >
+        </div>
+        <br />
+        <div>
+          <label for="price" class="form-label">Edit entry fee</label>
+          <input
+            type="number"
+            class="form-control"
+            name="listing[entry_fee]"
+            value="<%= listing_.entry_fee %>"
+            required
+          />
+        </div>
+        <br />
+        <div>
+          <label for="price" class="form-label">Edit Railway Station</label>
+          <input
+            type="text"
+            class="form-control"
+            name="listing[nearest_railway_station]"
+            value="<%= listing_.nearest_railway_station %>"
+            required
+          />
+        </div>
+        <br />
+        <div>
+          <label for="image" class="form-label">Edit image</label>
+          <input
+            type="text"
+            class="form-control"
+            name="listing[image]"
+            value="<%= listing_.image.url %>"
+            required
+          />
+        </div>
+        <br />
+        <div>
+          <label for="location" class="form-label">Edit location</label>
+          <input
+            type="text"
+            class="form-control"
+            name="listing[location]"
+            value="<%= listing_.location %>"
+            required
+          />
+        </div>
+        <br />
+        <div>
+          <label for="country" class="form-label">Edit country</label>
+          <input
+            type="text"
+            class="form-control"
+            name="listing[country]"
+            value="<%= listing_.country %>"
+            required
+          />
+        </div>
+        <br />
+        <button class="btn btn-dark addbtn">Edit</button>
+        <br /><br />
+      </form>
+    </div>
+  </div>
+</body>

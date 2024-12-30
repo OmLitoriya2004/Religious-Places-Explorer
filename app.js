@@ -1,83 +1,89 @@
-const express=require("express");
-const app=express();
-const path=require("path");
-const port=8080;
-const mongoose = require('mongoose');
-const listing = require('./models/temples');
-const methods=require("method-override");
-const ejsMate=require("ejs-mate");
+const express = require("express");
+const app = express();
+const path = require("path");
+const port = 8080;
+const mongoose = require("mongoose");
+const methods = require("method-override");
+const ejsMate = require("ejs-mate");
+const ExpressError = require("./utilities/ExpressError.js");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+
+const session = require("express-session");
+
+const User = require("./models/users.js");
+const placesRouter = require("./routes/places.js");
+const reviewsRouter = require("./routes/review.js");
+const UserRouter = require("./routes/user.js");
 
 app.use(methods("_method"));
-app.set("view engine","ejs");
-app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));
-app.engine('ejs', ejsMate);
-app.use(express.static(path.join(__dirname,"/public")));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
+app.engine("ejs", ejsMate);
+app.use(express.static(path.join(__dirname, "/public")));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/ReligiousPlaces');
+  await mongoose.connect("mongodb://127.0.0.1:27017/ReligiousPlaces");
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 main()
-    .then((res)=>{
-        console.log("Success");
-    })
-    .catch(err => console.log(err));
+  .then((res) => {
+    console.log("Success");
+  })
+  .catch((err) => console.log(err));
 
-app.get('/',(req,res)=>{
-    res.render("./listings/home.ejs");
-})
-app.get("/places",async (req,res)=>{
-    const lists=await listing.find({});
-    res.render("./listings/index.ejs",{lists});
-})
-app.get("/places/new",(req,res)=>{
-    res.render("./listings/new.ejs");
-})
-app.get('/places/:id',async (req,res)=>{
-    let {id}=req.params;
-    const listing_ = await listing.findById(id);
-    res.render("./listings/show.ejs",{listing_});
-})
-app.delete("/places/:id",async (req,res)=>{
-    let {id}=req.params;
-    await listing.findByIdAndDelete(id);
-    res.redirect("/places");
-})
-app.get("/places/:id/edit",async (req,res)=>{
-    let {id}=req.params;
-    const listing_=await listing.findById(id);
-    res.render("./listings/edit.ejs",{listing_});
-})
+const sessionOptions = {
+  secret: "mysupersecretcode",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+  },
+};
 
-app.post('/places',async (req,res)=>{
-    const newListing=new listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/places");
-})
-app.put("/places/:id", async (req, res) => {
-    let { id } = req.params;
-    const data = req.body.listing;
-    if (!data.image || !data.image.url) {
-        data.image = {
-            url: "https://www.ehimachal.org/wp-content/uploads/2023/05/Shikari-Devi-Temple-mandi.webp"
-        };
-    }
-    const { hotels_nearby } = data;
-    if (hotels_nearby) {
-        await listing.findByIdAndUpdate(id, {
-            ...data,
-            hotels_nearby: {
-                hotel_name: hotels_nearby.hotel_name,
-                price_per_night: hotels_nearby.price_per_night
-            }
-        });
-    } else {
-        await listing.findByIdAndUpdate(id, data);
-    }
-    res.redirect("/places");
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
 });
 
-app.listen(port,(req,res)=>{
-    console.log("okay");
-})
+app.get("/", (req, res) => {
+  res.render("./pages/home.ejs");
+});
+
+app.use("/places", placesRouter);
+app.use("/places/:id/reviews", reviewsRouter);
+app.use("", UserRouter);
+
+
+
+
+app.all("*", (req, res, next) => {
+  next(new ExpressError(404, "Page Not Found!"));
+});
+
+app.use((err, req, res, next) => {
+  let { statusCode = 500, message = "Something Went Wrong!" } = err;
+  res.status(statusCode).render("./pages/error.ejs", { message });
+});
+
+app.listen(port, (req, res) => {
+  console.log("okay");
+});

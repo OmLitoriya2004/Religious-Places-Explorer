@@ -30,17 +30,17 @@
 .f-info{
     text-align: center;
     display: flex;
-    height:8rem;
+    height: 8rem;
     background-color: #ebebeb;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: space-evenly;
-    /* min-height: 100vh; */
+    align-items: center; 
+    margin-top: auto; 
 }
 .container{
     flex:1;
 }
-.card{
+.listing-card{
     border:none !important;
     border-radius: 1rem !important;
     margin-bottom: 1.5rem !important;
@@ -63,7 +63,11 @@
     background-color: white;
 }
 .addbtn{
-    background-color: rgba(161, 140, 17, 0.938) !important;
+    background-color: rgba(140, 120, 4, 0.938) !important;
     border: none !important;
 
+}
+.auth{
+    background-color:rgba(107, 91, 3, 0.938) !important;
+    border-radius: 25px !important;
 }
