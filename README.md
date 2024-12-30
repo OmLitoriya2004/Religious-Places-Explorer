@@ -2,7 +2,8 @@
 
 A web application designed to explore and document various religious places across India. The platform allows users to add, view, and edit information about temples, gurudwaras, churches, and masjids. It also features review addition and deletion, along with authentication and authorization for user management.
 
-![image](https://github.com/user-attachments/assets/add69694-f5b5-47a9-b4cc-c85fb194c1c6)
+This is the main page of the website:
+![image](https://github.com/user-attachments/assets/49551400-4aa9-4fc1-9f0e-df048ef42bd1)
 
 
 ## Tools and Technologies Used
